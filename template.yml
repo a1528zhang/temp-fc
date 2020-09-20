@@ -1,0 +1,40 @@
+ROSTemplateFormatVersion: '2015-09-01'
+Transform: 'Aliyun::Serverless-2018-04-03'
+Resources:
+  fun-doc-to-image:
+    Type: 'Aliyun::Serverless::Service'
+    Properties:
+      Description: doc to image
+      Role: 'acs:ram::1039352964232466:role/fc-puppeteer-pdf-to-image-log'
+      LogConfig:
+        Project: k8s-log-custom-netless
+        Logstore: static-converter-stdout
+      VpcConfig:
+        VpcId: vpc-bp1u6dmd3ljowv3rkp6ik
+        VSwitchIds:
+          - vsw-bp14zsydtkemk5kj9kinq
+        SecurityGroupId: sg-bp1f0cym1zo1c318fy2g
+      NasConfig:
+        UserId: 10003
+        GroupId: 10003
+        MountPoints:
+          - ServerAddr: >-
+              002eb082-lzwe.cn-hangzhou.extreme.nas.aliyuncs.com:/share/fun-doc-to-image
+            MountDir: /mnt/auto
+      InternetAccess: true
+    conversion:
+      Type: 'Aliyun::Serverless::Function'
+      Properties:
+        Handler: 'link.netless.convert.DocToImageFC::handleRequest'
+        Runtime: java8
+        CodeUri: ./
+        MemorySize: 2048
+        Timeout: 600
+        EnvironmentVariables:
+          CLASSPATH: /mnt/auto/java
+          LD_LIBRARY_PATH: /code/.fun/root/usr/local/lib:/code/.fun/root/usr/lib:/code/.fun/root/usr/lib/x86_64-linux-gnu:/code/.fun/root/usr/lib64:/code/.fun/root/lib:/code/.fun/root/lib/x86_64-linux-gnu:/code/.fun/root/python/lib/python2.7/site-packages:/code/.fun/root/python/lib/python3.6/site-packages:/code:/code/lib:/usr/local/lib:/mnt/auto/root/usr/local/lib:/mnt/auto/root/usr/lib:/mnt/auto/root/usr/lib/x86_64-linux-gnu:/mnt/auto/root/usr/lib64:/mnt/auto/root/lib:/mnt/auto/root/lib/x86_64-linux-gnu:/mnt/auto/root/python/lib/python2.7/site-packages:/mnt/auto/root/python/lib/python3.6/site-packages:/mnt/auto/java
+          TABLESTORE_ENDPOINT: 'https://doc-convert-dev.cn-hangzhou.vpc.tablestore.aliyuncs.com'
+          TABLESTORE_AK:
+          TABLESTORE_SK:
+          TABLESTORE_CONVERT_INSTANCE: doc-convert-dev
+

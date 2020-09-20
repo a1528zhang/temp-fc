@@ -1,0 +1,4 @@
+nasMappings:
+  fun-doc-to-image:
+    - localNasDir: .fun/build/artifacts/fun-doc-to-image/conversion/lib
+      remoteNasDir: /mnt/auto/java
